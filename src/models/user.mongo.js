@@ -1,190 +1,163 @@
-let mongoose = require('mongoose');
-let passportLocalMongoose = require('passport-local-mongoose');
-
+const mongoose = require("mongoose");
 // TODO: Add user schema here
 
 // Education subSchema
-let education = new mongoose.Schema({
-    name: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'institution name is required'
-    },
-    degree: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    fieldOfStudy: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    startDate: {
-        type: Date,
-        default: '',
-        required: 'start date is required'
-    },
-    endDate: {
-        type: Date,
-        default: '',
-        required: 'end/expected date is required'
-    },
-    gpa: {
-        type: Number,
-        default: ''
-    },
-    awards: {
-        type: String,
-        default: '',
-        trim: true
-    },
-    description: {
-        type: String,
-        default: '',
-        trim: true
-    }
+const EducationSchema = new mongoose.Schema({
+  degree: {
+    type: String,
+    required: true,
+  },
+  institution: {
+    type: String,
+    required: true,
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: false,
+  },
+  description: {
+    type: String,
+    required: false,
+  },
+  category: {
+    type: String,
+    enum: ["High School", "Associate", "Bachelor", "Master", "PhD"],
+    required: true,
+  },
 });
 
 // Work Experience Schema
-let workExperience = new mongoose.Schema({
-    name: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'company name is required'
-    },
-    title: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'job title is required'
-    },
-    description: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'job description is required'
-    },
-    employmentType: { //full time / part time / contract
-        type: String,
-        default: '',
-        trim: true
-    },
-    startDate: {
-        type: Date,
-        default: '',
-        required: 'start date is required'
-    },
-    endDate: {
-        type: Date,
-        default: ''
-    },
-    location: {
-        type: String,
-        default: '',
-        trim: true
-    }
+const ExperienceSchema = new mongoose.Schema({
+  title: {
+    type: String,
+    required: true,
+  },
+  company: {
+    type: String,
+    required: true,
+  },
+  startDate: {
+    type: Date,
+    required: true,
+  },
+  endDate: {
+    type: Date,
+    required: false,
+  },
+  description: {
+    type: String,
+    required: false,
+  },
+  location: {
+    type: String,
+    required: false,
+  },
+});
+// Job Seeker Schema
+const JobSeekerSchema = new mongoose.Schema({
+  skills: {
+    type: [String],
+    required: false,
+  },
+  experience: {
+    type: [ExperienceSchema],
+    required: false,
+  },
+  education: {
+    type: [EducationSchema],
+    required: false,
+  },
 });
 
-// Job Seeker Schema
-let jobSeekerModel = mongoose.Schema({
-    email: { //this will be the username
-        type: String,
-        default: '',
-        trim: true,
-        required: 'email is required'
-    },
-    password: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'password is required'
-    },
-    firstName: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'first name is required'
-    },
-    lastName: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'last name is required'
-    },
-    dateOfBirth: {
-        type: Date,
-        default: '',
-        trim: true,
-        required: 'date of birth is required'
-    },
-    tagLine: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    lookingForJob: {
-        type: Boolean,
-        default: true,
-    },
-    educationHistory: {
-        type: education,
-        required: true
-    },
-    workHistory: {
-        type: workExperience
-    }
-},
-    {
-        collection:"jobseekers"
-    }
-);
-
-module.exports.JobSeeker = mongoose.model('jobseeker', jobSeekerModel);
-
-
 // Recruiter Schema
-let recruiterModel = mongoose.Schema({
-    email: { //this will be the username
-        type: String,
-        default: '',
-        trim: true,
-        required: 'email is required'
-    },
-    password: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'password is required'
-    },
-    firstName: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'first name is required'
-    },
-    lastName: {
-        type: String,
-        default: '',
-        trim: true,
-        required: 'last name is required'
-    },
-    companyName: {
-        type: String,
-        default: '',
-        trim: true,
-    },
-    position: {
-        type: String,
-        default: '',
-        trim: true,
-    }
-},
-    {
-        collection:"recruiters"
-    }
-);
+const RecruiterSchema = new mongoose.Schema({
+  company: {
+    type: String,
+    required: true,
+  },
+  website: {
+    type: String,
+    required: false,
+  },
+  phone: {
+    type: String,
+    required: false,
+  },
+});
 
-module.exports.Recruiter = mongoose.model('recruiter', recruiterModel);
+// Admin Schema
+const AdminSchema = new mongoose.Schema({
+  isAdmin: {
+    type: Boolean,
+    required: true,
+    default: true,
+  },
+});
+
+// User Schema
+const UserSchema = new mongoose.Schema({
+  userId: {
+    type: Number,
+    unique: true,
+    required: true,
+  },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    lowercase: true,
+    trim: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  role: {
+    type: String,
+    enum: ["job_seeker", "recruiter", "admin"],
+    required: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
+  phoneNumber: {
+    type: String,
+    required: true,
+  },
+  profileImage: {
+    type: String,
+    required: false,
+  },
+  bio: {
+    type: String,
+    required: false,
+  },
+  location: {
+    type: String,
+    required: false,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+const User = mongoose.model('User', UserSchema);
+module.exports = {
+  User,
+  JobSeeker: User.discriminator("JobSeeker", JobSeekerSchema),
+  Recruiter: User.discriminator("Recruiter", RecruiterSchema),
+  Admin: User.discriminator("Admin", AdminSchema),
+};
