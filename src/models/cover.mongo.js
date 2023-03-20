@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 
-//job application schema
+//cover letter schema
 let coverModel = mongoose.Schema({
     text: { //content
         type: String,
