@@ -1,4 +1,10 @@
-const { getUserExample, register } = require("../.././models/user.model");
+const {
+  getUserExample,
+  register,
+  login,
+} = require("../.././models/user.model");
+
+const jwt = require("jsonwebtoken");
 
 //User Register
 async function httpPostRegister(req, res) {
@@ -32,13 +38,34 @@ async function httpPostRegister(req, res) {
     // Register the new user
     console.log(newUser);
     const user = await register(newUser);
-    
 
     // Return a success message and the user object
     return res.status(201).json({ message: "User created successfully", user });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: "Internal server error" });
+  }
+}
+
+async function httpPostLogin(req, res) {
+  const { email, password } = req.body;
+
+  try {
+    // Authenticate the user with the provided email and password
+    const user = await login(email, password);
+
+    // Generate a JWT token for the user
+    const token = jwt.sign(
+      { userId: user.userId, role: user.role },
+      process.env.JWT_SECRET
+    );
+
+    // Set the token in a cookie and send a success response
+    res.cookie("token", token, { httpOnly: true });
+    res.status(200).send({ success: true });
+  } catch (error) {
+    // If the login fails, send an error response
+    res.status(401).send({ success: false, message: error.message });
   }
 }
 
@@ -69,4 +96,5 @@ module.exports = {
   httpPostUpdatePassword,
   httpGetUserExample,
   httpPostRegister,
+  httpPostLogin,
 };
