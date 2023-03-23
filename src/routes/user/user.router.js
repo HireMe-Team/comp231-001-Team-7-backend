@@ -12,6 +12,6 @@ userRouter
   .get("/example", httpGetUserExample)
   .post("/register", httpPostRegister)
   .post("/login", httpPostLogin)
-  .post("change-password", httpPostUpdatePassword);
+  .post("/change-password", httpPostUpdatePassword);
 
 module.exports = userRouter;
