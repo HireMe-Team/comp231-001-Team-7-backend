@@ -14,7 +14,7 @@ async function getUserCount() {
 
 async function finduser(id) {
   // Waiting for user Schema and userDb
-  const user = await userDb.findOne({ id });
+  const user = await User.findOne({ userId: id });
   if (user) {
     return user;
   } else {
@@ -91,10 +91,33 @@ async function login(email, password) {
 }
 
 async function changePassword(id, oldPassword, newPassword) {
-  user = await finduser(id);
+  // Find the user by ID
+  const user = await finduser((userId = id));
+  console.log({ user });
   if (user) {
-    //TODO: findOneAndUpdate the password
-    // Try catch block, if success return true, otherwise return false and raise exception
+    // Verify the old password matches
+    const passwordMatch = await bcrypt.compare(oldPassword, user.password);
+    if (passwordMatch) {
+      // Hash the new password
+      const saltRounds = 10;
+      const hashedPassword = await bcrypt.hash(newPassword, saltRounds);
+      console.log({ hashedPassword });
+      // Update the user's password in the database
+      try {
+        const result = await User.findOneAndUpdate(
+          { userId: id },
+          { password: hashedPassword }
+        );
+        console.log({ result });
+        return true;
+      } catch (error) {
+        throw new Error("Error updating password");
+      }
+    } else {
+      throw new Error("Old password does not match");
+    }
+  } else {
+    throw new Error("User not found");
   }
 }
 
