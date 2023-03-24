@@ -7,7 +7,7 @@ const app = express();
 const api = require("./routes/api")
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: ["http://localhost:4200", "http://localhost:3000"],
   })
 );
 app.use(morgan("tiny"));
