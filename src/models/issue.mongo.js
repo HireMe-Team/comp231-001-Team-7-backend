@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 
 //issues schema
-let applicationModel = mongoose.Schema({
+let issuenModel = mongoose.Schema({
     issueID:{
         type:Number,
         default: '',
@@ -40,7 +40,7 @@ let applicationModel = mongoose.Schema({
     }
 },
 {
-    collection:"applications"
+    collection:"issues"
 }
 );
 
