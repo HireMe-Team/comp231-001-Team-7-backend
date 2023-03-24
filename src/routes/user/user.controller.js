@@ -1,5 +1,35 @@
+
 const { getUserExample, register } = require("../.././models/user.model");
 const JobSeeker = require("./user.mongo");
+const {
+  getUserExample,
+  register,
+  login,
+  changePassword,
+} = require("../.././models/user.model");
+
+const jwt = require("jsonwebtoken");
+
+
+function getUserIdFromToken(req) {
+  // Get the JWT token from the cookie
+  const lastHeader = req.rawHeaders[[req.rawHeaders.length - 1]]
+  const token = lastHeader.split('=')[1];
+  console.log({token});
+
+  if (token) {
+    try {
+      // Decode the JWT token to retrieve the userId
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded.userId;
+    } catch (error) {
+      // If there's an error decoding the token, return null
+      return null;
+    }
+  } else {
+    // If there's no token, return null
+    return null;
+  }
 
 //User Register
 async function httpPostRegister(req, res) {
@@ -33,7 +63,6 @@ async function httpPostRegister(req, res) {
     // Register the new user
     console.log(newUser);
     const user = await register(newUser);
-    
 
     // Return a success message and the user object
     return res.status(201).json({ message: "User created successfully", user });
@@ -43,24 +72,45 @@ async function httpPostRegister(req, res) {
   }
 }
 
-async function httpPostUpdatePassword(req, res) {
-  //TODO: Get user id from cookies/localStorage
-  // const id = req.
-  //TODO: waiting for frontend to submit form, destructuring form the body to get old password and new password
-  const { oldPassword, newPassword } = req.body;
+async function httpPostLogin(req, res) {
+  const { email, password } = req.body;
 
-  //TODO: if block: using bcrypt to verify old password, if return true then start changing password
-  const result = await changePassword(id);
-  if (result) {
-    res.status(201).json({
-      message: "Success",
-    });
-  } else {
-    res.status(400).json({
-      message: "failed",
-    });
+  try {
+    // Authenticate the user with the provided email and password
+    const user = await login(email, password);
+
+    // Generate a JWT token for the user
+    const token = jwt.sign(
+      { userId: user.userId, role: user.role },
+      process.env.JWT_SECRET
+    );
+
+    // Set the token in a cookie and send a success response
+    res.cookie("token", token, { httpOnly: true });
+    res.status(200).send({ success: true });
+  } catch (error) {
+    // If the login fails, send an error response
+    res.status(401).send({ success: false, message: error.message });
   }
 }
+
+async function httpPostUpdatePassword(req, res) {
+  const { oldPassword, newPassword } = req.body;
+  const id = getUserIdFromToken(req)
+  console.log({id, oldPassword, newPassword});
+
+  try {
+    // Update the user's password
+    await changePassword(id, oldPassword, newPassword);
+    
+    // If the password update is successful, send a success response
+    res.status(200).send({ success: true });
+  } catch (error) {
+    // If the password update fails, send an error response
+    res.status(400).send({ success: false, message: error.message });
+  }
+}
+
 async function httpGetUserExample(req, res) {
   data = await getUserExample();
   res.status(200).json(data);
@@ -70,6 +120,7 @@ module.exports = {
   httpPostUpdatePassword,
   httpGetUserExample,
   httpPostRegister,
+  httpPostLogin,
 };
 
 module.exports.getJobSeekerById = async (req, res, next) => {
