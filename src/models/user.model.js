@@ -125,9 +125,11 @@ async function getUserExample() {
   return { "api testing": "123" };
 }
 
+
 module.exports = {
   getUserExample,
   changePassword,
   register,
   login,
 };
+

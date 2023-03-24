@@ -1,3 +1,6 @@
+
+const { getUserExample, register } = require("../.././models/user.model");
+const JobSeeker = require("./user.mongo");
 const {
   getUserExample,
   register,
@@ -27,7 +30,6 @@ function getUserIdFromToken(req) {
     // If there's no token, return null
     return null;
   }
-}
 
 //User Register
 async function httpPostRegister(req, res) {
@@ -120,3 +122,11 @@ module.exports = {
   httpPostRegister,
   httpPostLogin,
 };
+
+module.exports.getJobSeekerById = async (req, res, next) => {
+  let id = req.params.id;
+  let jobSeeker = await JobSeeker.findById(id);
+  res.locals.jobSeeker = jobSeeker;
+  
+  return next();
+}
