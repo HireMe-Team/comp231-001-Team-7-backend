@@ -1,4 +1,5 @@
 const { getUserExample, register } = require("../.././models/user.model");
+const JobSeeker = require("./user.mongo");
 
 //User Register
 async function httpPostRegister(req, res) {
@@ -70,3 +71,11 @@ module.exports = {
   httpGetUserExample,
   httpPostRegister,
 };
+
+module.exports.getJobSeekerById = async (req, res, next) => {
+  let id = req.params.id;
+  let jobSeeker = await JobSeeker.findById(id);
+  res.locals.jobSeeker = jobSeeker;
+  
+  return next();
+}
