@@ -2,6 +2,7 @@ const express = require("express");
 const {
   httpPostUpdatePassword,
   httpPostRegister,
+  getJobSeekerById,
   httpPostLogin,
   httpGetUserById,
   httpGetLogout,

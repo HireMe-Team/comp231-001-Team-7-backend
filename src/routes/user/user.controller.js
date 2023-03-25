@@ -1,5 +1,7 @@
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
+// const { getUserExample, register } = require("../.././models/user.model");
+const JobSeeker = require("../../models/user.mongo");
 const {
   register,
   login,
@@ -10,6 +12,29 @@ const {
   addProfilePicture,
 } = require("../../models/user/user.model");
 const { createIssue } = require("../../models/admin/issues/issues.model");
+
+
+
+function getUserIdFromToken(req) {
+  // Get the JWT token from the cookie
+  const lastHeader = req.rawHeaders[[req.rawHeaders.length - 1]]
+  const token = lastHeader.split('=')[1];
+  console.log({token});
+
+  if (token) {
+    try {
+      // Decode the JWT token to retrieve the userId
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      return decoded.userId;
+    } catch (error) {
+      // If there's an error decoding the token, return null
+      return null;
+    }
+  } else {
+    // If there's no token, return null
+    return null;
+  }
+}
 //User Register
 async function httpPostRegister(req, res) {
   try {
