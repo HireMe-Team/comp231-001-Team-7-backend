@@ -1,12 +1,12 @@
 
-const { getUserExample, register } = require("../.././models/user.model");
-const JobSeeker = require("./user.mongo");
+// const { getUserExample, register } = require("../.././models/user.model");
+const JobSeeker = require("../../models/user.mongo");
 const {
   getUserExample,
   register,
   login,
   changePassword,
-} = require("../.././models/user.model");
+} = require("../../models/user.model");
 
 const jwt = require("jsonwebtoken");
 
@@ -30,7 +30,7 @@ function getUserIdFromToken(req) {
     // If there's no token, return null
     return null;
   }
-
+}
 //User Register
 async function httpPostRegister(req, res) {
   try {
