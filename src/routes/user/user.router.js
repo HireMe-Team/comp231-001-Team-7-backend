@@ -3,7 +3,7 @@ const {
   httpGetUserExample,
   httpPostUpdatePassword,
   httpPostRegister,
-  getJobSeekerById
+  getJobSeekerById,
   httpPostLogin,
 } = require("./user.controller");
 
