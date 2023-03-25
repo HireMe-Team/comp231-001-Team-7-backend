@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-// TODO: Add user schema here
 
 // Education subSchema
 const EducationSchema = new mongoose.Schema({
@@ -87,6 +86,10 @@ const RecruiterSchema = new mongoose.Schema({
     type: String,
     required: false,
   },
+  approved: {
+    type: Boolean,
+    required: false
+  }
 });
 
 // Admin Schema
@@ -154,10 +157,12 @@ const UserSchema = new mongoose.Schema({
     default: Date.now,
   },
 });
-const User = mongoose.model('User', UserSchema);
+const User = mongoose.model("User", UserSchema);
 module.exports = {
   User,
+  EducationSchema,
   JobSeeker: User.discriminator("JobSeeker", JobSeekerSchema),
   Recruiter: User.discriminator("Recruiter", RecruiterSchema),
   Admin: User.discriminator("Admin", AdminSchema),
+  
 };

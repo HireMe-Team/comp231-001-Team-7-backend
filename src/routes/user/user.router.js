@@ -1,23 +1,28 @@
 const express = require("express");
 const {
-  httpGetUserExample,
   httpPostUpdatePassword,
   httpPostRegister,
   getJobSeekerById,
   httpPostLogin,
+  httpGetUserById,
+  httpGetLogout,
+  httpPostAddEducation,
+  httpPostAddProfilePic,
+  httpPostAddExperience,
+  httpPostCreateIssue,
 } = require("./user.controller");
 
 const userRouter = express.Router();
 
 userRouter
-  .get("/example", httpGetUserExample)
+  .get("/user/:id", httpGetUserById)
+  .get("/logout", httpGetLogout)
   .post("/register", httpPostRegister)
   .post("/login", httpPostLogin)
-  .post("/change-password", httpPostUpdatePassword);
-
-
-userRouter.get('/:id', [getJobSeekerById], async (req, res, next) => {
-  res.json(res.locals.jobSeeker);
-});
+  .post("/change-password", httpPostUpdatePassword)
+  .post("/add-education", httpPostAddEducation)
+  .post("/add-experience", httpPostAddExperience)
+  .post("/upload-profile-pic", httpPostAddProfilePic)
+  .post("/issue/create", httpPostCreateIssue);
 
 module.exports = userRouter;

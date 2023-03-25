@@ -44,7 +44,7 @@ let applicationModel = mongoose.Schema({
         required: 'last name is required'
     },
     resume: {
-        type: resume,
+        type: String,
         required: true
     },
     coverLetter: {

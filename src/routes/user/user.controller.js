@@ -1,14 +1,18 @@
-
+const jwt = require("jsonwebtoken");
+const uuid = require("uuid");
 // const { getUserExample, register } = require("../.././models/user.model");
 const JobSeeker = require("../../models/user.mongo");
 const {
-  getUserExample,
   register,
   login,
   changePassword,
-} = require("../../models/user.model");
+  finduser,
+  addEducation,
+  addExperience,
+  addProfilePicture,
+} = require("../../models/user/user.model");
+const { createIssue } = require("../../models/admin/issues/issues.model");
 
-const jwt = require("jsonwebtoken");
 
 
 function getUserIdFromToken(req) {
@@ -45,6 +49,7 @@ async function httpPostRegister(req, res) {
       profileImage,
       bio,
       location,
+      company,
     } = req.body;
 
     // Create a new user object
@@ -58,6 +63,8 @@ async function httpPostRegister(req, res) {
       profileImage,
       bio,
       location,
+      company,
+      approved: false,
     };
 
     // Register the new user
@@ -74,20 +81,17 @@ async function httpPostRegister(req, res) {
 
 async function httpPostLogin(req, res) {
   const { email, password } = req.body;
-
+  console.log(req.body);
   try {
     // Authenticate the user with the provided email and password
     const user = await login(email, password);
 
     // Generate a JWT token for the user
-    const token = jwt.sign(
-      { userId: user.userId, role: user.role },
-      process.env.JWT_SECRET
-    );
+    const token = jwt.sign({ user }, process.env.JWT_SECRET);
 
     // Set the token in a cookie and send a success response
     res.cookie("token", token, { httpOnly: true });
-    res.status(200).send({ success: true });
+    res.status(200).send({ success: true, token, userId: user.userId });
   } catch (error) {
     // If the login fails, send an error response
     res.status(401).send({ success: false, message: error.message });
@@ -95,14 +99,11 @@ async function httpPostLogin(req, res) {
 }
 
 async function httpPostUpdatePassword(req, res) {
-  const { oldPassword, newPassword } = req.body;
-  const id = getUserIdFromToken(req)
-  console.log({id, oldPassword, newPassword});
-
+  const { userId, currentPassword, newPassword } = req.body;
   try {
     // Update the user's password
-    await changePassword(id, oldPassword, newPassword);
-    
+    await changePassword(userId, currentPassword, newPassword);
+
     // If the password update is successful, send a success response
     res.status(200).send({ success: true });
   } catch (error) {
@@ -111,22 +112,102 @@ async function httpPostUpdatePassword(req, res) {
   }
 }
 
-async function httpGetUserExample(req, res) {
-  data = await getUserExample();
-  res.status(200).json(data);
+async function httpGetLogout(req, res, next) {
+  req.logout(function (err) {
+    if (err) {
+      res.status(400).json({
+        success: false,
+        message: err,
+      });
+    }
+    res.status(200).json({
+      success: true,
+    });
+  });
+}
+
+async function httpGetUserById(req, res) {
+  try {
+    const id = req.params.id;
+    const user = await finduser(id);
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Error getting user: ", error);
+    res.status(500).json({ message: "Error getting user" });
+  }
+}
+
+async function httpPostAddEducation(req, res) {
+  const userId = req.body.userId;
+  const education = req.body.education;
+  console.log(education);
+
+  try {
+    const updatedUser = await addEducation(userId, education);
+    console.log({ updatedUser });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error adding education to user" });
+  }
+}
+
+async function httpPostAddExperience(req, res) {
+  const userId = req.body.userId;
+  const experience = req.body.experience;
+  console.log(experience);
+
+  try {
+    const updatedUser = await addExperience(userId, experience);
+    console.log({ updatedUser });
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ message: "Error adding Experience to user" });
+  }
+}
+
+async function httpPostAddProfilePic(req, res) {
+  const { userId, url } = req.body;
+  try {
+    const result = await addProfilePicture(userId, url);
+    res.status(200).json({
+      success: true,
+    });
+  } catch (error) {
+    res.status(500).json({ success: false });
+  }
+}
+
+// User create issue
+async function httpPostCreateIssue(req, res) {
+  try {
+    const { title, userId, issueDetail } = req.body;
+    const issueId = uuid.v4();
+    const newIssue = {
+      issueID: issueId,
+      title,
+      userId,
+      issueDetail,
+      status: "pending",
+      reportDate: new Date(),
+    };
+    const issue = await createIssue(newIssue);
+    res.status(201).json(issue);
+  } catch (error) {
+    console.error("Error creating issue: ", error);
+    res.status(500).json({ message: "Error creating issue" });
+  }
 }
 
 module.exports = {
   httpPostUpdatePassword,
-  httpGetUserExample,
   httpPostRegister,
   httpPostLogin,
+  httpGetUserById,
+  httpGetLogout,
+  httpPostAddEducation,
+  httpPostAddProfilePic,
+  httpPostAddExperience,
+  httpPostCreateIssue,
 };
-
-module.exports.getJobSeekerById = async (req, res, next) => {
-  let id = req.params.id;
-  let jobSeeker = await JobSeeker.findById(id);
-  res.locals.jobSeeker = jobSeeker;
-  
-  return next();
-}

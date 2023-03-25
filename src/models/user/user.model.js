@@ -1,4 +1,4 @@
-const { User, JobSeeker, Recruiter } = require("./user.mongo");
+const { User, JobSeeker, Recruiter, Admin } = require("./user.mongo");
 const bcrypt = require("bcrypt");
 
 async function getUserCount() {
@@ -12,6 +12,7 @@ async function getUserCount() {
   }
 }
 
+// ------------------- Find user by id ---------------- //
 async function finduser(id) {
   // Waiting for user Schema and userDb
   const user = await User.findOne({ userId: id });
@@ -22,6 +23,7 @@ async function finduser(id) {
   }
 }
 
+// ------------------- Register ---------------- //
 async function register(user) {
   // Check if the email is already registered
   const existingJobSeeker = await JobSeeker.findOne({ email: user.email });
@@ -54,17 +56,25 @@ async function register(user) {
       password: hashedPassword,
     });
     newUser.userId = (await getUserCount()) + 1;
+    newUser.company = user.company;
+  } else if (user.role === "admin") {
+    newUser = new Admin({
+      ...user,
+      password: hashedPassword,
+    });
+    newUser.userId = (await getUserCount()) + 1;
   } else {
     throw new Error("Invalid user role");
   }
 
   // Save the user to the database
+  console.log({ newUser });
   await newUser.save();
 
   return newUser;
 }
 
-// Login
+// ------------------- Login ---------------- //
 async function login(email, password) {
   // Check if the email exists in the JobSeeker collection
   const jobSeeker = await JobSeeker.findOne({ email });
@@ -90,6 +100,7 @@ async function login(email, password) {
   throw new Error("Invalid email or password");
 }
 
+// ------------------- Change Password ---------------- //
 async function changePassword(id, oldPassword, newPassword) {
   // Find the user by ID
   const user = await finduser((userId = id));
@@ -121,15 +132,48 @@ async function changePassword(id, oldPassword, newPassword) {
   }
 }
 
-async function getUserExample() {
-  return { "api testing": "123" };
+// ------------------- User add education ---------------- //
+async function addEducation(userId, educationToAdd) {
+  try {
+    const user = await User.findOne({ userId: userId });
+    user.education.push(educationToAdd);
+    await user.save();
+    return user;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+// ------------------- User add Experience ---------------- //
+async function addExperience(userId, experienceToAdd) {
+  try {
+    const user = await User.findOne({ userId: userId });
+    user.experience.push(experienceToAdd);
+    await user.save();
+    return user;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
 }
 
-
+// ------------------- User add Profile Picture ---------------- //
+async function addProfilePicture(userId, pictureToAdd) {
+  const user = await finduser(userId);
+  user.profileImage = pictureToAdd;
+  try {
+    await user.save();
+    return true;
+  } catch (error) {
+    return error.message;
+  }
+}
 module.exports = {
-  getUserExample,
   changePassword,
   register,
   login,
+  finduser,
+  addEducation,
+  addProfilePicture,
+  addExperience,
 };
-

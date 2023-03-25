@@ -3,7 +3,7 @@ let mongoose = require('mongoose');
 //issues schema
 let issueModel = mongoose.Schema({
     issueID:{
-        type:Number,
+        type:String,
         default: '',
         unique: true,
         required: true,
