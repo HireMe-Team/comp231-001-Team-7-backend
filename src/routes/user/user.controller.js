@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const uuid = require("uuid");
 // const { getUserExample, register } = require("../.././models/user.model");
-const JobSeeker = require("../../models/user.mongo");
+const JobSeeker = require("../../models/user/user.mongo");
 const {
   register,
   login,
