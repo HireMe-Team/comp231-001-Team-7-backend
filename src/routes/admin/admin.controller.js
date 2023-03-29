@@ -11,6 +11,7 @@ const {
 const {
   getAllIssues,
   getIssueById,
+  markIssueAsSolved,
 } = require("../../models/admin/issues/issues.model");
 async function httpPostAdminLogin(req, res) {
   const { email, password } = req.body;
@@ -102,11 +103,11 @@ async function httpGetAllIssues(req, res) {
 }
 
 async function httpGetIssueById(req, res) {
-    const issueID = req.params.id;
-    console.log({issueID});
+  const issueID = req.params.id;
+  console.log({ issueID });
   try {
     const issue = await getIssueById(issueID);
-    
+
     if (!issue) {
       res.status(404).send(`Issue with ID ${issueID} not found`);
       return;
@@ -115,6 +116,21 @@ async function httpGetIssueById(req, res) {
   } catch (error) {
     console.error(`Error getting issue by ID ${issueID}: ${error}`);
     res.status(500).send("Error getting issue");
+  }
+}
+
+async function httpPutIssueApproved(req, res) {
+  const issueID = req.body.issueID;
+  try {
+    const result = await markIssueAsSolved(issueID);
+    if (!result) {
+      res.status(404).send(`Issue with ID ${issueID} not found`);
+      return;
+    }
+    res.json(result);
+  } catch (error) {
+    console.error(`Error make issue ${issueID} approved: ${error}`);
+    res.status(500).send(error);
   }
 }
 
@@ -129,4 +145,5 @@ module.exports = {
   //Issue
   httpGetAllIssues,
   httpGetIssueById,
+  httpPutIssueApproved,
 };

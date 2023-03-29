@@ -9,6 +9,7 @@ const {
   httpPostCreateJobHuntSuggestions,
   httpGetAllIssues,
   httpGetIssueById,
+  httpPutIssueApproved,
 } = require("./admin.controller");
 const adminRouter = express.Router();
 
@@ -21,6 +22,7 @@ adminRouter
   .get("/issue-details/:id", httpGetIssueById)
   .post("/login", httpPostAdminLogin)
   .post("/job-hunting-tips/create", httpPostCreateJobHuntSuggestions)
-  .put("/approve-recruiter/:id", httpPutApproveRecruiter);
+  .put("/approve-recruiter/:id", httpPutApproveRecruiter)
+  .put("/issues/solved", httpPutIssueApproved);
 
 module.exports = adminRouter;

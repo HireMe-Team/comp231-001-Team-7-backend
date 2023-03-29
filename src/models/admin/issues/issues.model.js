@@ -34,8 +34,24 @@ async function getIssueById(issueID) {
   }
 }
 
+async function markIssueAsSolved(issueID) {
+  try {
+    const issueToApprove = await issue.findOne({issueID});
+    if (!issueToApprove) throw new Error('Issue not found');
+    
+    issueToApprove.status = 'solved';
+    await issueToApprove.save();
+    
+    return issueToApprove;
+  } catch (error) {
+    console.error('Error marking issue as solved:', error);
+    throw new Error('Error marking issue as solved');
+  }
+}
+
 module.exports = {
   getAllIssues,
   createIssue,
   getIssueById,
+  markIssueAsSolved
 };
