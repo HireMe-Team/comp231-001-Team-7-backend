@@ -34,7 +34,7 @@ let issueModel = mongoose.Schema({
         required: true
     },
     replyMessage:{ // the unique id for a message, refer to the schema of messages
-        type: Number,
+        type: String,
         default: '',
         required: false
     }

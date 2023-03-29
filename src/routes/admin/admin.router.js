@@ -10,6 +10,7 @@ const {
   httpGetAllIssues,
   httpGetIssueById,
   httpPutIssueApproved,
+  httpPutAdminAddMessage,
 } = require("./admin.controller");
 const adminRouter = express.Router();
 
@@ -23,6 +24,7 @@ adminRouter
   .post("/login", httpPostAdminLogin)
   .post("/job-hunting-tips/create", httpPostCreateJobHuntSuggestions)
   .put("/approve-recruiter/:id", httpPutApproveRecruiter)
-  .put("/issues/solved", httpPutIssueApproved);
+  .put("/issues/solved", httpPutIssueApproved)
+  .put("/issue-details/:id/add-message", httpPutAdminAddMessage);
 
 module.exports = adminRouter;
