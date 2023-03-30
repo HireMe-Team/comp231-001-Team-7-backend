@@ -1,6 +1,5 @@
 const { User, JobSeeker, Recruiter, Admin } = require("./user.mongo");
 const bcrypt = require("bcrypt");
-
 async function getUserCount() {
   try {
     const count = await User.countDocuments({});

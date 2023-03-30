@@ -10,11 +10,13 @@ const {
   httpPostAddProfilePic,
   httpPostAddExperience,
   httpPostCreateIssue,
+  httpGetIssueById,
 } = require("./user.controller");
 
 const userRouter = express.Router();
 
 userRouter
+  .get("/user/issues/:userId", httpGetIssueById)
   .get("/user/:id", httpGetUserById)
   .get("/logout", httpGetLogout)
   .post("/register", httpPostRegister)

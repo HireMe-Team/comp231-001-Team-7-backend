@@ -13,6 +13,7 @@ const {
   getIssueById,
   markIssueAsSolved,
   adminAddMessage,
+  getMessages,
 } = require("../../models/admin/issues/issues.model");
 async function httpPostAdminLogin(req, res) {
   const { email, password } = req.body;
@@ -140,18 +141,24 @@ async function httpPutAdminAddMessage(req, res) {
   const issueID = req.params.id;
   try {
     const addMessageResult = await adminAddMessage(message, issueID);
-    console.log({addMessageResult});
+    console.log({ addMessageResult });
     if (!addMessageResult) {
       res.status(404).json({
         success: false,
         message: `Unable to add admin message to ${issueID}`,
       });
     }
-    res.status(200).json({success: true})
+    res.status(200).json({ success: true });
   } catch (error) {
     console.log(error);
     res.status(500).send(error);
   }
+}
+
+async function httpGetMessage(req, res) {
+  const issueID = req.params.id;
+  const message = await getMessages(issueID);
+  message ? res.status(200).json(message) : res.status(404);
 }
 
 module.exports = {
@@ -167,4 +174,5 @@ module.exports = {
   httpGetIssueById,
   httpPutIssueApproved,
   httpPutAdminAddMessage,
+  httpGetMessage,
 };

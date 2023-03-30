@@ -11,15 +11,16 @@ const {
   addExperience,
   addProfilePicture,
 } = require("../../models/user/user.model");
-const { createIssue } = require("../../models/admin/issues/issues.model");
-
-
+const {
+  createIssue,
+  getIssuesByUserId,
+} = require("../../models/admin/issues/issues.model");
 
 function getUserIdFromToken(req) {
   // Get the JWT token from the cookie
-  const lastHeader = req.rawHeaders[[req.rawHeaders.length - 1]]
-  const token = lastHeader.split('=')[1];
-  console.log({token});
+  const lastHeader = req.rawHeaders[[req.rawHeaders.length - 1]];
+  const token = lastHeader.split("=")[1];
+  console.log({ token });
 
   if (token) {
     try {
@@ -200,6 +201,13 @@ async function httpPostCreateIssue(req, res) {
   }
 }
 
+// Get User's Issue
+async function httpGetIssueById(req, res) {
+  const userId = req.params.userId;
+  const issues = await getIssuesByUserId(userId);
+  issues ? res.status(200).json(issues) : res.status(404);
+}
+
 module.exports = {
   httpPostUpdatePassword,
   httpPostRegister,
@@ -210,4 +218,5 @@ module.exports = {
   httpPostAddProfilePic,
   httpPostAddExperience,
   httpPostCreateIssue,
+  httpGetIssueById,
 };
