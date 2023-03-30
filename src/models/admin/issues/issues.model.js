@@ -64,10 +64,22 @@ async function adminAddMessage(message, issueID) {
   return true;
 }
 
+async function getMessages(issueID) {
+  const issueToAddMessage = await issue.findOne({ issueID });
+  const messageID = issueToAddMessage.replyMessage;
+  const message = await messageSchema.findById(messageID);
+  return message ? message : null;
+}
+
+async function getIssuesByUserId(userId) {
+  return await issue.find({ userId });
+}
 module.exports = {
   getAllIssues,
   createIssue,
   getIssueById,
   markIssueAsSolved,
-  adminAddMessage
+  adminAddMessage,
+  getMessages,
+  getIssuesByUserId
 };
