@@ -10,6 +10,27 @@ async function getAllJobs() {
   }
 }
 
+async function searchJobs(keyword, type = "") {
+  try {
+    // Define the search criteria
+    const searchCriteria = {
+      $text: { $search: keyword },
+    };
+    if (type !== "") {
+      searchCriteria.type = type;
+    }
+
+    // Search for job posts using the search criteria
+    const jobPosts = await Job.find(searchCriteria).exec();
+
+    return jobPosts;
+  } catch (error) {
+    console.error(error);
+    throw new Error("Failed to search for job posts.");
+  }
+}
+
+
 async function getJobById(_id) {
   try {
     const job = await Job.findById(_id);
@@ -17,6 +38,16 @@ async function getJobById(_id) {
   } catch (err) {
     console.error(err);
     throw new Error("Error getting job by id");
+  }
+}
+
+async function getJobsByRecruiter(recruiterId) {
+  try {
+    const jobs = await Job.find({ recruiterId: recruiterId });
+    return jobs;
+  } catch (error) {
+    console.log(error);
+    throw new Error("Error getting jobs by recruiter id");
   }
 }
 
@@ -57,4 +88,6 @@ module.exports = {
   getJobById,
   updateJobPosting,
   deleteJobPosting,
+  getJobsByRecruiter,
+  searchJobs,
 };

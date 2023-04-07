@@ -4,6 +4,8 @@ const {
   getJobById,
   updateJobPosting,
   deleteJobPosting,
+  getJobsByRecruiter,
+  searchJobs,
 } = require("../../models/jobs/jobs.model");
 
 async function httpGetAllJobs(req, res) {
@@ -13,6 +15,17 @@ async function httpGetAllJobs(req, res) {
   } catch (err) {
     console.error(err);
     return res.status(500).send("Error getting all jobs.");
+  }
+}
+
+async function httpGetJobsByRecruiterId(req, res) {
+  const recruiterId = req.params.id;
+  try {
+    const jobs = await getJobsByRecruiter(recruiterId);
+    return res.status(200).json(jobs);
+  } catch (error) {
+    console.error(error);
+    return res.status(500).send("Error getting jobs");
   }
 }
 
@@ -64,10 +77,24 @@ async function httpDeleteJobPosting(req, res) {
   }
 }
 
+async function httpGetSearchJobs(req, res) {
+  try {
+    const { keywords, type } = req.query;
+    const jobPosts = await searchJobs(keywords, type);
+
+    res.status(200).json(jobPosts);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to search for job posts." });
+  }
+}
+
 module.exports = {
   httpGetAllJobs,
   httpPostCreateJobPosting,
   httpGetJobById,
   httpPutUpdateJobPosting,
   httpDeleteJobPosting,
+  httpGetJobsByRecruiterId,
+  httpGetSearchJobs,
 };
