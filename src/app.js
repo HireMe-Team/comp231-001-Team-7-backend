@@ -19,7 +19,7 @@ app.use(
     origin: [
       "http://localhost:4200",
       "http://localhost:3000",
-      "https://amazing-tartufo-eb2458.netlify.app/",
+      "https://amazing-tartufo-eb2458.netlify.app",
     ],
   })
 );
