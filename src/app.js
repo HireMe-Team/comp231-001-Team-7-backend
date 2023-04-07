@@ -6,7 +6,7 @@ const passport = require("passport");
 const session = require("express-session");
 const app = express();
 
-const api = require("./routes/api")
+const api = require("./routes/api");
 app.use(
   session({
     saveUninitialized: true,
@@ -16,7 +16,11 @@ app.use(
 );
 app.use(
   cors({
-    origin: ["http://localhost:4200", "http://localhost:3000"],
+    origin: [
+      "http://localhost:4200",
+      "http://localhost:3000",
+      "https://amazing-tartufo-eb2458.netlify.app/",
+    ],
   })
 );
 app.use(morgan("tiny"));
