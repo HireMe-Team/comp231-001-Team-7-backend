@@ -70,6 +70,7 @@ const JobSeekerSchema = new mongoose.Schema({
     type: [EducationSchema],
     required: false,
   },
+  bookmarkedjobs: [{ type : mongoose.Schema.Types.ObjectId, ref:"job"}],
 });
 
 // Recruiter Schema

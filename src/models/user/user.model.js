@@ -22,6 +22,17 @@ async function finduser(id) {
   }
 }
 
+// ------------------- Find JobSeeker by id -------------//
+async function findJobSeeker(id){
+  const jobSeeker = await JobSeeker.findOne({userId:id});
+  if (jobSeeker){
+    return jobSeeker;
+  }
+    else {
+    return false;
+  }
+}
+
 // ------------------- Register ---------------- //
 async function register(user) {
   // Check if the email is already registered
@@ -171,12 +182,48 @@ async function addProfilePicture(userId, pictureToAdd) {
     return error.message;
   }
 }
+
+// -------------------- User add a bookmarked job ----------------//
+async function addBookmark(userId, jobPostToAdd) {
+  try{
+    const jobSeeker = await JobSeeker.findOne(userId);
+    if(!jobSeeker.bookmarkedjobs.includes(jobPostToAdd.id)){ jobSeeker.bookmarkedjobs.push(jobPostToAdd.id);}
+    await jobSeeker.save();
+    return jobSeeker;
+  } catch (error){
+    return error.message;
+  }
+}
+// -------------------- User remove a bookmarked job -------------//
+async function removeBookmark(userId, jobPostToRemove) {
+  try{
+    const jobSeeker = await JobSeeker.findOne(userId);
+    jobSeeker.bookmarkedjobs.pull(jobPostToAdd.id);
+    await jobSeeker.save();
+    return jobSeeker;
+  } catch (error){
+    return error.message;
+  }
+}
+// --------------------- Get bookmarked jobs ---------------------//
+async function getBookmarks(userId){
+  try{
+    const jobSeeker = await JobSeeker.findOne(userId);
+    return jobSeeker.bookmarkedjobs;
+  }catch(error){
+    return error.message;
+  }
+}
 module.exports = {
   changePassword,
   register,
   login,
   finduser,
+  findJobSeeker,
   addEducation,
   addProfilePicture,
   addExperience,
+  addBookmark,
+  removeBookmark,
+  getBookmarks,
 };

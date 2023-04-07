@@ -11,6 +11,9 @@ const {
   httpPostAddExperience,
   httpPostCreateIssue,
   httpGetIssueById,
+  httpGetBookmarks,
+  httpAddBookmark,
+  httpRemoveBookmark,
 } = require("./user.controller");
 
 const userRouter = express.Router();
@@ -25,6 +28,9 @@ userRouter
   .post("/add-education", httpPostAddEducation)
   .post("/add-experience", httpPostAddExperience)
   .post("/upload-profile-pic", httpPostAddProfilePic)
-  .post("/issue/create", httpPostCreateIssue);
+  .post("/issue/create", httpPostCreateIssue)
+  .get("/user/bookmarks", httpGetBookmarks)
+  .post("/user/remove-bookmark", httpRemoveBookmark)
+  .post("/user/add-bookmark", httpAddBookmark);
 
 module.exports = userRouter;

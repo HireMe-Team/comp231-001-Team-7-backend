@@ -10,6 +10,8 @@ const {
   addEducation,
   addExperience,
   addProfilePicture,
+  findJobSeeker,
+  getBookmarks,
 } = require("../../models/user/user.model");
 const {
   createIssue,
@@ -209,6 +211,34 @@ async function httpGetIssueById(req, res) {
   issues ? res.status(200).json(issues) : res.status(404);
 }
 
+// Get User's saved&bookmarked jobs
+async function httpGetBookmarks(req, res) {
+  const userId = req.params.userId;
+  const bookmarks = await getBookmarks(userId);
+  bookmarks ? res.status(200).json(bookmarks) : res.status(404);
+}
+// User add a saved job
+async function httpAddBookmark(req, res){
+  try{
+    const{ userId, jobId} = req.body;
+    const jobSeeker = await findJobSeeker(userId);
+    jobSeeker.addBookmark(jobId) ? res.status(200) : res.status(500).json({message: "Error adding saved job"});
+  }catch(error){
+    console.error("Error adding saved job", error);
+    res.status(500).json({message: "Error adding saved job"})
+  }
+}
+// User remove a saved job
+async function httpRemoveBookmark(req, res){
+  try{
+    const{ userId, jobId} = req.body;
+    const jobSeeker = await findJobSeeker(userId);
+    jobSeeker.removeBookmark(jobId) ? res.status(200) : res.status(500).json({message: "Error adding saved job"});
+  }catch(error){
+    console.error("Error adding saved job", error);
+    res.status(500).json({message: "Error adding saved job"})
+  }
+}
 module.exports = {
   httpPostUpdatePassword,
   httpPostRegister,
@@ -220,4 +250,7 @@ module.exports = {
   httpPostAddExperience,
   httpPostCreateIssue,
   httpGetIssueById,
+  httpGetBookmarks,
+  httpAddBookmark,
+  httpRemoveBookmark,
 };
