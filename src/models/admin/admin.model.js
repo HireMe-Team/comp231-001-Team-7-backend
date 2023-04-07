@@ -12,7 +12,6 @@ async function adminLogin(email, password) {
       return admin;
     }
   }
-
   // If the email does not exist in either collection or the password is incorrect, throw an error
   throw new Error("Invalid email or password");
 }

@@ -6,6 +6,7 @@ const {
   deleteJobPosting,
   getJobsByRecruiter,
   searchJobs,
+  submitApplication,
 } = require("../../models/jobs/jobs.model");
 
 async function httpGetAllJobs(req, res) {
@@ -89,6 +90,19 @@ async function httpGetSearchJobs(req, res) {
   }
 }
 
+async function httpPostSubmitApplication(req, res) {
+  try {
+    const application = req.body;
+    const result = await submitApplication(application);
+    res.status(200).json({ sucess: true, result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "An error occurred while submitting the job application",
+    });
+  }
+}
+
 module.exports = {
   httpGetAllJobs,
   httpPostCreateJobPosting,
@@ -97,4 +111,5 @@ module.exports = {
   httpDeleteJobPosting,
   httpGetJobsByRecruiterId,
   httpGetSearchJobs,
+  httpPostSubmitApplication,
 };

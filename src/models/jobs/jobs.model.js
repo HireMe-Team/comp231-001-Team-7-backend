@@ -16,6 +16,7 @@ async function searchJobs(keyword, type = "") {
     const searchCriteria = {
       $text: { $search: keyword },
     };
+    console.log(type);
     if (type !== "") {
       searchCriteria.type = type;
     }
@@ -29,7 +30,6 @@ async function searchJobs(keyword, type = "") {
     throw new Error("Failed to search for job posts.");
   }
 }
-
 
 async function getJobById(_id) {
   try {
@@ -81,6 +81,27 @@ async function deleteJobPosting(_id) {
     throw new Error("Error deleting job posting");
   }
 }
+async function submitApplication(application) {
+  try {
+    const job = await Job.findById(application.jobId);
+    if (!job) {
+      throw new Error("Job not found");
+    }
+    console.log({application});
+    const applicationData = {
+      userId: application.userId,
+      firstName: application.firstName,
+      lastName: application.lastName,
+      email: application.email,
+      resume: application.resume,
+    };
+    job.applications.push(applicationData);
+    await job.save();
+    return applicationData;
+  } catch (error) {
+    throw new Error(`Could not submit application: ${error.message}`);
+  }
+}
 
 module.exports = {
   getAllJobs,
@@ -90,4 +111,5 @@ module.exports = {
   deleteJobPosting,
   getJobsByRecruiter,
   searchJobs,
+  submitApplication,
 };

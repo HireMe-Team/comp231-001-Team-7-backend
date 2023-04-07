@@ -87,14 +87,18 @@ async function login(email, password) {
 
   // Check if the email exists in the Recruiter collection
   const recruiter = await Recruiter.findOne({ email });
+
+
   if (recruiter) {
+    if (!recruiter.approved) {
+      throw new Error("Recruiter account not approved");
+    }
     // If the email exists in the Recruiter collection, compare the password
     const passwordMatch = await bcrypt.compare(password, recruiter.password);
     if (passwordMatch) {
       return recruiter;
     }
   }
-
   // If the email does not exist in either collection or the password is incorrect, throw an error
   throw new Error("Invalid email or password");
 }
