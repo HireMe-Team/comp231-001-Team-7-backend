@@ -60,6 +60,15 @@ let jobModel = mongoose.Schema(
       type: Number,
       required: true,
     },
+    applications: [
+      {
+        userId: { type: Number, required: true },
+        firstName: { type: String, required: true },
+        lastName: { type: String, required: true },
+        email: { type: String, required: true },
+        resume: { type: String },
+      },
+    ],
   },
   {
     collection: "jobs",

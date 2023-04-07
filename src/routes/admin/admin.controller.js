@@ -21,7 +21,6 @@ async function httpPostAdminLogin(req, res) {
   try {
     // Authenticate the user with the provided email and password
     const user = await adminLogin(email, password);
-
     // Generate a JWT token for the user
     const token = jwt.sign({ user }, process.env.JWT_SECRET);
 
@@ -30,7 +29,7 @@ async function httpPostAdminLogin(req, res) {
     res.status(200).send({ success: true, token, userId: user.userId });
   } catch (error) {
     // If the login fails, send an error response
-    res.status(401).send({ success: false, message: error.message });
+    res.status(200).send({ success: false, message: error.message });
   }
 }
 
