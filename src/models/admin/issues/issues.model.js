@@ -1,5 +1,6 @@
 const { issue } = require("./issues.mongo");
 const { messageSchema } = require("./messages.mongo");
+
 async function getAllIssues() {
   try {
     const issues = await issue.find({});
@@ -81,5 +82,5 @@ module.exports = {
   markIssueAsSolved,
   adminAddMessage,
   getMessages,
-  getIssuesByUserId
+  getIssuesByUserId,
 };

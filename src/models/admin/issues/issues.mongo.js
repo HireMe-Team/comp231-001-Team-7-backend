@@ -1,7 +1,7 @@
 let mongoose = require('mongoose');
 
 //issues schema
-let issueModel = mongoose.Schema({
+const issueModel = mongoose.Schema({
     issueID:{
         type:String,
         default: '',
